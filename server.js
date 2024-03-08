@@ -3,10 +3,11 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 
 const users = require('./routes/api/users');
-const profile = require('./routes/api/profile');
+const profiles = require('./routes/api/profiles');
 const posts = require('./routes/api/posts');
 const metrics = require('./routes/api/metrics');
 const citations = require('./routes/api/citations');
+const pigs = require('./routes/api/pigs');
 
 const app = express();
 
@@ -23,10 +24,11 @@ app.get('/', (req, res) => res.send('Hello'));
 
 //Use Routes
 app.use('/api/users', users);
-app.use('/api/profile', profile);
+app.use('/api/profiles', profiles);
 app.use('/api/posts', posts);
 app.use('/api/metrics', metrics);
 app.use('/api/citations', citations);
+app.use('/api/pigs', pigs);
 
 const port = process.env.PORT || 5000;
 
