@@ -23,9 +23,11 @@ const ProfileSchema = new Schema({
   },
   status: {
     type: String,
+    required: true,
   },
   skills: {
     type: [String],
+    required: true,
   },
   bio: {
     type: String,
@@ -33,35 +35,82 @@ const ProfileSchema = new Schema({
   githubusername: {
     type: String,
   },
-  experience: {
-    company: {
-      type: String,
+  experience: [
+    {
+      title: {
+        type: String,
+        required: true,
+      },
+      company: {
+        type: String,
+        required: true,
+      },
+      location: {
+        type: String,
+        required: true,
+      },
+      from: {
+        type: Date,
+        required: true,
+      },
+      to: {
+        type: Date,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      description: {
+        type: String,
+      },
     },
-    titles: {
-      type: String,
-    },
-    projects: {
-      type: String,
-    },
-  },
+  ],
 
-  education: {
-    school: {
-      type: String,
+  education: [
+    {
+      school: {
+        type: String,
+        required: true,
+      },
+      degree: {
+        type: String,
+        required: true,
+      },
+      fieldofstudy: {
+        type: String,
+        required: true,
+      },
+      from: {
+        type: Date,
+        required: true,
+      },
+      to: {
+        type: Date,
+      },
+      current: {
+        type: Boolean,
+        default: false,
+      },
+      description: {
+        type: String,
+      },
     },
-    degrees: {
-      type: String,
-    },
-    certificates: {
-      type: String,
-    },
-  },
+  ],
 
   social: {
     youtube: {
       type: String,
     },
+    twitter: {
+      type: String,
+    },
+    facebook: {
+      type: String,
+    },
     linkedin: {
+      type: String,
+    },
+    instagram: {
       type: String,
     },
   },
@@ -69,11 +118,6 @@ const ProfileSchema = new Schema({
     type: Date,
     default: Date.now,
   },
-  // description: {
-  //   type: [String],
-  // },
-  // description should be Researcher, Landowner, Other
-  // it would be entering a list of csv (a,b,c) and using logic to parse them into the database
 });
 
 module.exports = Profile = mongoose.model('profile', ProfileSchema);
