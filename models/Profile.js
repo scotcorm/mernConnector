@@ -21,14 +21,14 @@ const ProfileSchema = new Schema({
   location: {
     type: String,
   },
-  status: {
-    type: String,
-    required: true,
-  },
-  skills: {
-    type: [String],
-    required: true,
-  },
+  // status: {
+  //   type: String,
+  //   required: true,
+  // },
+  // skills: {
+  //   type: [String],
+  //   required: true,
+  // },
   bio: {
     type: String,
   },
@@ -47,7 +47,6 @@ const ProfileSchema = new Schema({
       },
       location: {
         type: String,
-        required: true,
       },
       from: {
         type: Date,
@@ -65,7 +64,6 @@ const ProfileSchema = new Schema({
       },
     },
   ],
-
   education: [
     {
       school: {
@@ -96,7 +94,6 @@ const ProfileSchema = new Schema({
       },
     },
   ],
-
   social: {
     youtube: {
       type: String,
