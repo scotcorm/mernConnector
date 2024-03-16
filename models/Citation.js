@@ -5,21 +5,35 @@ const Schema = mongoose.Schema;
 const CitationSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'citations',
+    ref: 'users',
   },
-  metrics: [
+  citation: [
     {
       title: {
         type: String,
+        required: true,
       },
       creator: {
         type: String,
+        required: true,
       },
       source: {
         type: String,
+        required: true,
       },
       license: {
         type: String,
+        enum: [
+          'CCby',
+          'CCby-nc',
+          'CCby-nc-nd',
+          'CCby-nc-sa',
+          'CCby-nd',
+          'CCby-sa',
+          'Other license (specified below)',
+        ],
+        message: 'Choose an option from the list',
+        required: true,
       },
       title2: {
         type: String,
@@ -35,6 +49,22 @@ const CitationSchema = new Schema({
       },
     },
   ],
+  text: {
+    type: String,
+  },
+  name: {
+    type: String,
+  },
+  image: {
+    type: String,
+  },
+  avatar: {
+    type: String,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = Citation = mongoose.model('citation', CitationSchema);

@@ -5,12 +5,18 @@ const Schema = mongoose.Schema;
 const MetricSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
-    ref: 'metrics',
+    ref: 'users',
+  },
+  name: {
+    type: String,
+  },
+  avatar: {
+    type: String,
   },
   metrics: [
     {
       date: {
-        type: Date,
+        type: String,
       },
       year: {
         type: String,
@@ -35,6 +41,10 @@ const MetricSchema = new Schema({
       },
     },
   ],
+  date: {
+    type: Date,
+    default: Date.now,
+  },
 });
 
 module.exports = Metric = mongoose.model('metric', MetricSchema);
