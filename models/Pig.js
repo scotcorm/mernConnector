@@ -15,7 +15,13 @@ const PigSchema = new Schema({
   },
   data: [
     {
-      date: {
+      observationDate: {
+        type: String,
+      },
+      id: {
+        type: String,
+      },
+      observationUser: {
         type: String,
       },
       year: {
@@ -28,6 +34,9 @@ const PigSchema = new Schema({
         type: String,
       },
       count: {
+        type: Number,
+      },
+      observationId: {
         type: Number,
       },
       notes: {
