@@ -99,4 +99,146 @@ router.delete(
   }
 );
 
+// @route  Post api/citations/like/:id
+// @desc   Like citation
+// @access Private
+router.post(
+  '/like/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Profile.findOne({ user: req.user.id }).then((profile) => {
+      Citation.findById(req.params.id)
+        .then((citation) => {
+          if (
+            citation.likes.filter(
+              (like) => like.user.toString() === req.user.id
+            ).length > 0
+          ) {
+            return res
+              .status(400)
+              .json({ alreadyliked: 'User already liked this citation' });
+          }
+
+          // add user id to likes array
+          citation.likes.unshift({ user: req.user.id });
+
+          citation.save().then((citation) => res.json(citation));
+        })
+        .catch((err) =>
+          res.status(404).json({ citationnotfound: 'Citation not found' })
+        );
+    });
+  }
+);
+
+// @route  Post api/posts/unlike/:id
+// @desc   Unlike post
+// @access Private
+router.post(
+  '/unlike/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Profile.findOne({ user: req.user.id }).then((profile) => {
+      Citation.findById(req.params.id)
+        .then((citation) => {
+          if (
+            citation.likes.filter(
+              (like) => like.user.toString() === req.user.id
+            ).length > 0
+          ) {
+            return res
+              .status(400)
+              .json({ notliked: 'You have not liked this citation' });
+          }
+
+          // Get remove index
+          const removeIndex = citation.likes
+            .map((item) => item.user.toString())
+            .indexOf(req.user.id);
+
+          // Splice out of array
+          citation.likes.splice(removeIndex, 1);
+
+          // Save
+          citation.save().then((citation) => res.json(citation));
+        })
+        .catch((err) =>
+          res.status(404).json({ citationnotfound: 'Citation not found' })
+        );
+    });
+  }
+);
+
+// @route  Citation api/citations/comment/:id
+// @desc   Add comment to citation
+// @access Private
+router.post(
+  '/comment/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validateCitationInput(req.body);
+
+    //Check Validation
+    if (!isValid) {
+      // If any errors send 400 with errors object
+      return res.status(400).json(errors);
+    }
+
+    Citation.findById(req.params.id)
+      .then((citation) => {
+        const newComment = {
+          text: req.body.text,
+          name: req.body.name,
+          avatar: req.body.avatar,
+          user: req.user.id,
+        };
+
+        // Add to comments array
+        citation.comments.unshift(newComment);
+
+        //Save
+        citation.save().then((citation) => res.json(citation));
+      })
+      .catch((err) =>
+        res.status(404).json({ citationnotfound: 'No citation found' })
+      );
+  }
+);
+
+// @route  Delete api/citations/comment/:id/:comment_id
+// @desc   Remove comment from citation
+// @access Private
+router.delete(
+  '/comment/:id/:comment_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Citation.findById(req.params.id)
+      .then((citation) => {
+        // Check to see if the comment exists
+        if (
+          citation.comments.filter(
+            (comment) => comment._id.toString() === req.params.comment_id
+          ).length === 0
+        ) {
+          return res
+            .status(404)
+            .json({ commentdoesnotexist: 'Comment does not exist' });
+        }
+
+        // Get remove index
+        const removeIndex = citation.comments
+          .map((item) => item._id.toString())
+          .indexOf(req.params.comment_id);
+
+        // Splice comment out of the array
+        citation.comments.splice(removeIndex, 1);
+
+        citation.save().then((citation) => res.json(citation));
+      })
+      .catch((err) =>
+        res.status(404).json({ citationnotfound: 'No citation found' })
+      );
+  }
+);
+
 module.exports = router;

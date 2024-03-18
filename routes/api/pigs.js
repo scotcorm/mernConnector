@@ -83,4 +83,72 @@ router.delete(
   }
 );
 
+// @route  Post api/pigs/comment/:id
+// @desc   Add comment to pig
+// @access Private
+router.post(
+  '/comment/:id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    const { errors, isValid } = validatePigInput(req.body);
+
+    //Check Validation
+    if (!isValid) {
+      // If any errors send 400 with errors object
+      return res.status(400).json(errors);
+    }
+
+    Pig.findById(req.params.id)
+      .then((pig) => {
+        const newComment = {
+          text: req.body.text,
+          name: req.body.name,
+          avatar: req.body.avatar,
+          user: req.user.id,
+        };
+
+        // Add to comments array
+        pig.comments.unshift(newComment);
+
+        //Save
+        pig.save().then((pig) => res.json(pig));
+      })
+      .catch((err) => res.status(404).json({ pignotfound: 'No pig found' }));
+  }
+);
+
+// @route  Delete api/pigs/comment/:id/:comment_id
+// @desc   Remove comment from pig
+// @access Private
+router.delete(
+  '/comment/:id/:comment_id',
+  passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    Pig.findById(req.params.id)
+      .then((pig) => {
+        // Check to see if the comment exists
+        if (
+          pig.comments.filter(
+            (comment) => comment._id.toString() === req.params.comment_id
+          ).length === 0
+        ) {
+          return res
+            .status(404)
+            .json({ commentdoesnotexist: 'Comment does not exist' });
+        }
+
+        // Get remove index
+        const removeIndex = pig.comments
+          .map((item) => item._id.toString())
+          .indexOf(req.params.comment_id);
+
+        // Splice comment out of the array
+        pig.comments.splice(removeIndex, 1);
+
+        pig.save().then((pig) => res.json(pig));
+      })
+      .catch((err) => res.status(404).json({ pignotfound: 'No pig found' }));
+  }
+);
+
 module.exports = router;
